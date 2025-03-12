@@ -68,7 +68,7 @@
             padding: 2rem;
             max-width: 800px;
             z-index: 1;
-            transition: transform 0.5s ease;
+            transition: transform 0.3s ease;
         }
 
         .title {
@@ -194,17 +194,6 @@
             opacity: 0;
         }
 
-        /* Special effects for final days */
-        .shake {
-            animation: shake 0.5s infinite;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
         /* Confetti styles */
         #confetti-container {
             position: fixed;
@@ -223,15 +212,200 @@
             animation: confettiFall linear infinite;
         }
 
-        @keyframes confettiFall {
+        /* Retro elements for final week */
+        .retro-element {
+            position: absolute;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .pacman {
+            width: 30px;
+            height: 30px;
+            background: var(--neon-yellow);
+            border-radius: 50%;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+            animation: pacman-move 15s linear infinite, rotate 0.5s alternate infinite;
+        }
+
+        .space-invader {
+            width: 30px;
+            height: 30px;
+            background-color: var(--neon-green);
+            position: relative;
+            clip-path: polygon(
+                0% 25%,
+                25% 25%,
+                25% 0%,
+                75% 0%,
+                75% 25%,
+                100% 25%,
+                100% 75%,
+                75% 75%,
+                75% 100%,
+                25% 100%,
+                25% 75%,
+                0% 75%
+            );
+            animation: invader-move 20s linear infinite;
+        }
+
+        .tetris {
+            width: 60px;
+            height: 15px;
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 5px var(--neon-pink);
+            animation: tetris-fall 12s linear infinite;
+        }
+
+        .tetris.l-shape {
+            width: 45px;
+            height: 30px;
+            background-color: var(--neon-blue);
+            box-shadow: 0 0 5px var(--neon-blue);
+            clip-path: polygon(0 0, 66.66% 0, 66.66% 66.66%, 100% 66.66%, 100% 100%, 0 100%);
+        }
+
+        .tetris.t-shape {
+            width: 45px;
+            height: 30px;
+            background-color: var(--neon-purple);
+            box-shadow: 0 0 5px var(--neon-purple);
+            clip-path: polygon(33.33% 0, 66.66% 0, 66.66% 33.33%, 100% 33.33%, 100% 66.66%, 0 66.66%, 0 33.33%, 33.33% 33.33%);
+        }
+
+        .cassette-tape {
+            width: 40px;
+            height: 25px;
+            background-color: #333;
+            border: 2px solid var(--neon-pink);
+            border-radius: 5px;
+            position: relative;
+            animation: cassette-float 25s linear infinite;
+        }
+
+        .cassette-tape:before, .cassette-tape:after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #111;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cassette-tape:before {
+            left: 8px;
+        }
+
+        .cassette-tape:after {
+            right: 8px;
+        }
+
+        .vinyl-record {
+            width: 35px;
+            height: 35px;
+            background-color: #111;
+            border-radius: 50%;
+            border: 1px solid #444;
+            position: relative;
+            animation: vinyl-spin 10s linear infinite, vinyl-float 18s linear infinite;
+        }
+
+        .vinyl-record:before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes pacman-move {
             0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
+                left: -30px;
+                top: 10%;
             }
             100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
+                left: 100%;
+                top: 30%;
             }
+        }
+
+        @keyframes invader-move {
+            0% {
+                left: 100%;
+                top: 15%;
+            }
+            50% {
+                left: 30%;
+                top: 25%;
+            }
+            100% {
+                left: -30px;
+                top: 40%;
+            }
+        }
+
+        @keyframes tetris-fall {
+            0% {
+                top: -30px;
+                left: 20%;
+                transform: rotate(0deg);
+            }
+            100% {
+                top: 100%;
+                left: 15%;
+                transform: rotate(180deg);
+            }
+        }
+
+        @keyframes cassette-float {
+            0% {
+                left: -40px;
+                top: 60%;
+                transform: rotate(-10deg);
+            }
+            50% {
+                left: 50%;
+                top: 75%;
+                transform: rotate(10deg);
+            }
+            100% {
+                left: 100%;
+                top: 50%;
+                transform: rotate(-5deg);
+            }
+        }
+
+        @keyframes vinyl-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes vinyl-float {
+            0% {
+                left: 80%;
+                top: 85%;
+            }
+            50% {
+                left: 30%;
+                top: 65%;
+            }
+            100% {
+                left: -35px;
+                top: 80%;
+            }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(45deg); }
         }
 
         @keyframes twinkle {
@@ -289,13 +463,14 @@
             }
         }
 
-        @keyframes spin {
+        @keyframes confettiFall {
             0% {
-                transform: rotate(0deg);
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
             }
-
             100% {
-                transform: rotate(360deg);
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
             }
         }
 
@@ -331,6 +506,7 @@
 <body>
     <div class="grid"></div>
     <div class="retro-stars" id="stars"></div>
+    <div id="retro-elements"></div>
 
     <div class="container">
         <h1 class="title">Countdown to June 20, 2025</h1>
@@ -411,7 +587,46 @@
             {"song": "Flashdance...What A Feeling", "artist": "Irene Cara", "youtube_link": "https://www.youtube.com/watch?v=ILWSp0m9G2U"}
         ];
 
-        // Update countdown timer - fixed with correct time calculation
+        // LOCAL STORAGE KEYS
+        const PLAYED_SONGS_KEY = 'played80sSongs';
+        
+        // Get played songs from local storage or initialize an empty array
+        function getPlayedSongs() {
+            const played = localStorage.getItem(PLAYED_SONGS_KEY);
+            return played ? JSON.parse(played) : [];
+        }
+        
+        // Mark a song as played in local storage
+        function markSongAsPlayed(index) {
+            const played = getPlayedSongs();
+            if (!played.includes(index)) {
+                played.push(index);
+                localStorage.setItem(PLAYED_SONGS_KEY, JSON.stringify(played));
+            }
+        }
+
+        // Get song of the day using a cyclic approach to ensure all songs are played
+        function getCyclicSongIndex() {
+            const played = getPlayedSongs();
+            
+            // If all songs have been played, reset the played list
+            if (played.length >= songs.length) {
+                localStorage.setItem(PLAYED_SONGS_KEY, JSON.stringify([]));
+                return 0; // Start again from the first song
+            }
+            
+            // Find a song that hasn't been played yet
+            const notPlayed = songs.map((_, idx) => idx).filter(idx => !played.includes(idx));
+            
+            // Use date as seed for random selection among unplayed songs
+            const today = new Date();
+            const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            const randomIndex = seed % notPlayed.length;
+            
+            return notPlayed[randomIndex];
+        }
+
+        // Update countdown timer
         function updateCountdown() {
             const now = new Date().getTime();
             let distance = targetDate - now;
@@ -437,6 +652,54 @@
             
             // Update special effects for the final week
             updateSpecialEffects(days);
+        }
+
+        // Create and add 80s themed elements for final week
+        function createRetroElements() {
+            const container = document.getElementById('retro-elements');
+            const elements = [];
+            
+            // Pacman
+            const pacman = document.createElement('div');
+            pacman.classList.add('retro-element', 'pacman');
+            elements.push(pacman);
+            
+            // Space Invader
+            const invader = document.createElement('div');
+            invader.classList.add('retro-element', 'space-invader');
+            elements.push(invader);
+            
+            // Tetris pieces
+            const tetris = document.createElement('div');
+            tetris.classList.add('retro-element', 'tetris');
+            elements.push(tetris);
+            
+            const tetrisL = document.createElement('div');
+            tetrisL.classList.add('retro-element', 'tetris', 'l-shape');
+            tetrisL.style.animationDelay = '3s';
+            tetrisL.style.left = '60%';
+            elements.push(tetrisL);
+            
+            const tetrisT = document.createElement('div');
+            tetrisT.classList.add('retro-element', 'tetris', 't-shape');
+            tetrisT.style.animationDelay = '7s';
+            tetrisT.style.left = '80%';
+            elements.push(tetrisT);
+            
+            // Cassette tape
+            const cassette = document.createElement('div');
+            cassette.classList.add('retro-element', 'cassette-tape');
+            elements.push(cassette);
+            
+            // Vinyl record
+            const vinyl = document.createElement('div');
+            vinyl.classList.add('retro-element', 'vinyl-record');
+            elements.push(vinyl);
+            
+            // Add all elements to container
+            elements.forEach(el => container.appendChild(el));
+            
+            return elements;
         }
 
         // Special effects for the final week
@@ -472,187 +735,12 @@
                     }
                 }
                 
-                // Shake effect in the last 3 days
-                if (daysLeft <= 3) {
-                    document.querySelector('.container').classList.add('shake');
-                    // Increase shake intensity as we get closer
-                    const shakeIntensity = 0.7 - (daysLeft * 0.2);
-                    document.querySelector('.shake').style.animationDuration = `${shakeIntensity}s`;
-                }
-                
-                // Add confetti in the final day
-                if (daysLeft <= 1 && !document.getElementById('confetti-container')) {
-                    startConfetti();
-                }
-            }
-        }
-
-        // Add extra stars for the final countdown
-        function addExtraStars(count) {
-            const starsContainer = document.getElementById('stars');
-            
-            // Remove previous extra stars if any
-            const oldExtraStars = document.querySelectorAll('.extra-star');
-            oldExtraStars.forEach(star => star.remove());
-            
-            // Add new stars
-            for (let i = 0; i < count; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star', 'extra-star');
-                
-                // Random position
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-                
-                // Random size (slightly larger than normal stars)
-                const size = 0.5 + Math.random() * 3.5;
-                
-                // Random twinkle duration (faster than normal stars)
-                const duration = 0.5 + Math.random() * 2;
-                
-                // Random delay
-                const delay = Math.random() * 3;
-                
-                star.style.left = `${x}%`;
-                star.style.top = `${y}%`;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.setProperty('--duration', `${duration}s`);
-                star.style.animationDelay = `${delay}s`;
-                
-                starsContainer.appendChild(star);
-            }
-        }
-
-        // Start confetti effect
-        function startConfetti() {
-            const confetti = document.createElement('div');
-            confetti.id = 'confetti-container';
-            document.body.appendChild(confetti);
-            
-            // Create 100 confetti pieces
-            for (let i = 0; i < 100; i++) {
-                createConfettiPiece(confetti);
-            }
-        }
-
-        // Create single confetti piece
-        function createConfettiPiece(container) {
-            const confettiPiece = document.createElement('div');
-            confettiPiece.classList.add('confetti-piece');
-            
-            // Random 80s neon color
-            const colors = ['#ff71ce', '#01cdfe', '#05ffa1', '#b967ff', '#fffb96'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            
-            // Random properties
-            const left = Math.random() * 100;
-            const speed = 3 + Math.random() * 5;
-            const size = 5 + Math.random() * 10;
-            const delay = Math.random() * 5;
-            
-            confettiPiece.style.backgroundColor = color;
-            confettiPiece.style.left = `${left}%`;
-            confettiPiece.style.width = `${size}px`;
-            confettiPiece.style.height = `${size}px`;
-            confettiPiece.style.animationDuration = `${speed}s`;
-            confettiPiece.style.animationDelay = `${delay}s`;
-            
-            container.appendChild(confettiPiece);
-            
-            // Remove piece after animation completes
-            setTimeout(() => {
-                confettiPiece.remove();
-                // Create a new piece to keep the effect going
-                createConfettiPiece(container);
-            }, (speed + delay) * 1000);
-        }
-
-        // Get song of the day, with special handling for final 3 days
-        function getSongOfTheDay() {
-            const now = new Date().getTime();
-            let distance = targetDate - now;
-            const daysLeft = Math.floor(distance / (1000 * 60 * 60 * 24));
-            
-            let todaySong;
-            
-            // For the last 3 days, always play "The Final Countdown"
-            if (daysLeft <= 3) {
-                todaySong = {
-                    song: "The Final Countdown",
-                    artist: "Europe",
-                    youtube_link: finalCountdownLink
-                };
-            } else {
-                // Normal daily song rotation
-                const today = new Date();
-                const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-                const songIndex = dayOfYear % songs.length;
-                todaySong = songs[songIndex];
-            }
-
-            // Update song info and embed video
-            document.getElementById('song-info').innerText = `${todaySong.song} - ${todaySong.artist}`;
-
-            // Convert YouTube link to embed format
-            let videoId = todaySong.youtube_link.split('v=')[1];
-            
-            // Handle any time parameters if present
-            const ampersandPosition = videoId ? videoId.indexOf('&') : -1;
-            if (ampersandPosition !== -1) {
-                videoId = videoId.substring(0, ampersandPosition);
-            }
-
-            document.getElementById('youtube-iframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
-
-            return todaySong;
-        }
-
-        // Create stars
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            const starsCount = 100;
-
-            for (let i = 0; i < starsCount; i++) {
-                const star = document.createElement('div');
-                star.classList.add('star');
-
-                // Random position
-                const x = Math.random() * 100;
-                const y = Math.random() * 100;
-
-                // Random size
-                const size = Math.random() * 3;
-
-                // Random twinkle duration
-                const duration = 2 + Math.random() * 3;
-
-                // Random delay
-                const delay = Math.random() * 5;
-
-                star.style.left = `${x}%`;
-                star.style.top = `${y}%`;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.setProperty('--duration', `${duration}s`);
-                star.style.animationDelay = `${delay}s`;
-
-                starsContainer.appendChild(star);
-            }
-        }
-        
-        // Initialize
-        createStars();
-        getSongOfTheDay();
-        updateCountdown();
-
-        // Update countdown every second
-        const countdownInterval = setInterval(updateCountdown, 1000);
-        
-        // For testing the final effects (uncomment to test)
-        // Comment out before using in production
-        // targetDate = new Date().getTime() + (3 * 24 * 60 * 60 * 1000); // 3 days from now
-    </script>
-</body>
-
-</html>
+                // Show 80s retro elements
+                if (!document.querySelector('.retro-elements-added')) {
+                    const retroElements = createRetroElements();
+                    retroElements.forEach(el => {
+                        el.style.opacity = intensity.toString();
+                    });
+                    document.body.classList.add('retro-elements-added');
+                } else {
+                    // Update opacity of existing elements
