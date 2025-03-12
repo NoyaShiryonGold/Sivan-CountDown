@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80s Style Countdown Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --neon-pink: #ff71ce;
+            --neon-blue: #01cdfe;
+            --neon-green: #05ffa1;
+            --neon-purple: #b967ff;
+            --neon-yellow: #fffb96;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            font-family: 'VT323', monospace;
+            color: #fff;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(255, 113, 206, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 90% 30%, rgba(1, 205, 254, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 50% 80%, rgba(5, 255, 161, 0.2) 0%, transparent 20%),
+                linear-gradient(0deg, #000 0%, #150820 100%);
+        }
+
+        .grid {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image: linear-gradient(var(--neon-blue) 1px, transparent 1px),
+                linear-gradient(90deg, var(--neon-blue) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center center;
+            transform: perspective(500px) rotateX(60deg);
+            opacity: 0.15;
+            z-index: -1;
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(40px);
+            }
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .title {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            text-shadow:
+                0 0 5px var(--neon-pink),
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 40px var(--neon-pink);
+            animation: neon-flicker 5s infinite alternate;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-blue);
+            box-shadow:
+                0 0 5px var(--neon-blue),
+                0 0 10px var(--neon-blue);
+            padding: 1rem;
+            border-radius: 5px;
+            min-width: 100px;
+        }
+
+        .countdown-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow:
+                0 0 3px var(--neon-green),
+                0 0 3px var(--neon-green);
+        }
+
+        .countdown-label {
+            font-size: 1.2rem;
+            color: var(--neon-yellow);
+        }
+
+        .song-container {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-purple);
+            box-shadow:
+                0 0 5px var(--neon-purple),
+                0 0 10px var(--neon-purple);
+            border-radius: 5px;
+            animation: pulse 4s infinite;
+        }
+
+        .song-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--neon-pink);
+        }
+
+        .song-artist {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--neon-yellow);
+        }
+
+        .cassette {
+            position: relative;
+            width: 240px;
+            height: 150px;
+            background: #333;
+            margin: 0 auto;
+            border-radius: 10px;
+            border: 1px solid #555;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+
+        .video-container {
+            margin-top: 1.5rem;
+            position: relative;
+            width: 100%;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 3px solid var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #youtube-iframe {
+            display: block;
+            width: 100%;
+            height: 315px;
+            background-color: #000;
+        }
+
+        .retro-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite both;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes neon-flicker {
+
+            0%,
+            19.999%,
+            22%,
+            62.999%,
+            64%,
+            64.999%,
+            70%,
+            100% {
+                opacity: 0.99;
+                text-shadow:
+                    0 0 5px var(--neon-pink),
+                    0 0 10px var(--neon-pink),
+                    0 0 20px var(--neon-pink),
+                    0 0 40px var(--neon-pink);
+            }
+
+            20%,
+            21.999%,
+            63%,
+            63.999%,
+            65%,
+            69.999% {
+                opacity: 0.4;
+                text-shadow: none;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow:
+                    0 0 5px var(--neon-purple),
+                    0 0 10px var(--neon-purple);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 10px var(--neon-purple),
+                    0 0 20px var(--neon-purple),
+                    0 0 30px var(--neon-purple);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .countdown {
+                gap: 0.5rem;
+            }
+
+            .countdown-item {
+                min-width: 70px;
+                padding: 0.7rem;
+            }
+
+            .countdown-number {
+                font-size: 2rem;
+            }
+
+            .countdown-label {
+                font-size: 1rem;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .cassette {
+                transform: scale(0.8);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid"></div>
+    <div class="retro-stars" id="stars"></div>
+
+    <div class="container">
+        <h1 class="title">Countdown to June 20, 2025</h1>
+
+        <div class="countdown">
+            <div class="countdown-item">
+                <div class="countdown-number" id="days">00</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="hours">00</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutes">00</div>
+                <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="seconds">00</div>
+                <div class="countdown-label">Seconds</div>
+            </div>
+        </div>
+
+        <div class="song-container">
+            <h2 class="song-title">Today's Hit:</h2>
+            <p class="song-artist" id="song-info">Loading...</p>
+
+            <div class="video-container">
+                <iframe id="youtube-iframe" width="560" height="315" src="" title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Target date - June 20, 2025
+        const targetDate = new Date(2025, 5, 20, 0, 0, 0, 0).getTime(); // Month is 0-based, so June is 5
+
+        // Songs list
+        const songs = [
+            {"song": "Billie Jean", "artist": "Michael Jackson", "youtube_link": "https://www.youtube.com/watch?v=Zi_XLOBDo_Y"},
+            {"song": "Take On Me", "artist": "A Ha", "youtube_link": "https://www.youtube.com/watch?v=djV11Xbc914"},
+            {"song": "Call Me", "artist": "Blondie", "youtube_link": "http://www.youtube.com/watch?v=StKVS0eI85I"},
+            {"song": "Centerfold", "artist": "The J. Geils Band", "youtube_link": "http://www.youtube.com/watch?v=BqDjMZKf-wg"},
+            {"song": "Beat It", "artist": "Michael Jackson", "youtube_link": "https://www.youtube.com/watch?v=Ym0hZG-zNOk"},
+            {"song": "Eye Of The Tiger", "artist": "Survivor", "youtube_link": "https://www.youtube.com/watch?v=btPJPFnesV4"},
+            {"song": "Bette Davis Eyes", "artist": "Kim Carnes", "youtube_link": "https://www.youtube.com/watch?v=EPOIS5taqA8"},
+            {"song": "Another One Bites The Dust", "artist": "Queen", "youtube_link": "https://www.youtube.com/watch?v=rY0WxgSXdEE"},
+            {"song": "Maneater", "artist": "Hall & Oates", "youtube_link": "https://www.youtube.com/watch?v=yRYFKcMa_Ek"},
+            {"song": "When Doves Cry", "artist": "Prince", "youtube_link": "https://www.youtube.com/watch?v=hkyR2q9CDe0"},
+            {"song": "I Love Rock 'N Roll", "artist": "Joan Jett", "youtube_link": "https://www.youtube.com/watch?v=xL5spALs-eA"},
+            {"song": "Another Brick In The Wall Part II", "artist": "Pink Floyd", "youtube_link": "https://www.youtube.com/watch?v=34ZmKbe5oG4"},
+            {"song": "Like A Virgin", "artist": "Madonna", "youtube_link": "https://www.youtube.com/watch?v=s__rX_WL100"},
+            {"song": "Jump", "artist": "Van Halen", "youtube_link": "https://www.youtube.com/watch?v=SwYN7mTi6HM"},
+            {"song": "Thriller", "artist": "Michael Jackson", "youtube_link": "https://www.youtube.com/watch?v=sOnqjkJTMaA"},
+            {"song": "Physical", "artist": "Olivia Newton John", "youtube_link": "https://www.youtube.com/watch?v=vWz9VN40nCA"},
+            {"song": "Every Breath You Take", "artist": "The Police", "youtube_link": "https://www.youtube.com/watch?v=OMOGaugKpzs"},
+            {"song": "Jack & Diane", "artist": "John Cougar Mellencamp", "youtube_link": "https://www.youtube.com/watch?v=h04CH9YZcpI"},
+            {"song": "Walking On Sunshine", "artist": "Katrina & The Waves", "youtube_link": "https://www.youtube.com/watch?v=iPUmE-tne5U"},
+            {"song": "Whip It", "artist": "Devo", "youtube_link": "https://www.youtube.com/watch?v=j_QLzthSkfM"},
+            {"song": "Come On Eileen", "artist": "Dexy's Midnight Runners", "youtube_link": "https://www.youtube.com/watch?v=rVxcwe7EcaY"},
+            {"song": "Karma Chameleon", "artist": "Culture Club", "youtube_link": "https://www.youtube.com/watch?v=JmcA9LIIXWw"},
+            {"song": "Cars", "artist": "Gary Numan", "youtube_link": "https://www.youtube.com/watch?v=LdyX3KHOFXw"},
+            {"song": "Celebration", "artist": "Kool & The Gang", "youtube_link": "https://www.youtube.com/watch?v=3GwjfUFyY6M"},
+            {"song": "Let My Love Open The Door", "artist": "Pete Townshend", "youtube_link": "https://www.youtube.com/watch?v=4FZbcoWrUsw"},
+            {"song": "Tainted Love", "artist": "Soft Cell", "youtube_link": "https://www.youtube.com/watch?v=XF68OyTlP4E"},
+            {"song": "She Drives Me Crazy", "artist": "Fine Young Cannibals", "youtube_link": "https://www.youtube.com/watch?v=0sw54Pdh_m8"},
+            {"song": "Hungry Like The Wolf", "artist": "Duran Duran", "youtube_link": "https://www.youtube.com/watch?v=oOg5VxrRTi0"},
+            {"song": "Total Eclipse Of The Heart", "artist": "Bonnie Tyler", "youtube_link": "https://www.youtube.com/watch?v=lcOxhH8N3Bo"},
+            {"song": "Maniac", "artist": "Michael Seello", "youtube_link": "https://www.youtube.com/watch?v=tivxRf6xEDw"},
+            {"song": "Mickey", "artist": "Tony Basil", "youtube_link": "https://www.youtube.com/watch?v=NW7VnHnX3LQ"},
+            {"song": "Sweet Dreams", "artist": "Eurythmics", "youtube_link": "https://www.youtube.com/watch?v=qeMFqkcPYcg"},
+            {"song": "The Power of Love", "artist": "Huey Lewis & The News", "youtube_link": "http://www.youtube.com/watch?v=KCkgYhtz64U"},
+            {"song": "Flashdance...What A Feeling", "artist": "Irene Cara", "youtube_link": "https://www.youtube.com/watch?v=ILWSp0m9G2U"}
+        ];
+
+        // Update countdown timer - fixed with correct time calculation
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let distance = targetDate - now;
+
+            // Make sure distance is not negative
+            if (distance < 0) {
+                distance = 0;
+                document.querySelector('.title').innerText = 'We Have Arrived!';
+                document.querySelector('.title').style.color = 'var(--neon-green)';
+            }
+
+            // Calculate days, hours, minutes, seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display results
+            document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+            document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+            document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+
+        // Get song of the day
+        function getSongOfTheDay() {
+            // Use the date to seed the random song (same song all day)
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+
+            // Get song based on day of year
+            const songIndex = dayOfYear % songs.length;
+            const todaySong = songs[songIndex];
+
+            // Update song info and embed video
+            document.getElementById('song-info').innerText = `${todaySong.song} - ${todaySong.artist}`;
+
+            // Convert YouTube link to embed format
+            let videoId = todaySong.youtube_link.split('v=')[1];
+            // Handle any time parameters if present
+            const ampersandPosition = videoId.indexOf('&');
+            if (ampersandPosition !== -1) {
+                videoId = videoId.substring(0, ampersandPosition);
+            }
+
+            document.getElementById('youtube-iframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0`;
+
+            return todaySong;
+        }
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starsCount = 100;
+
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+
+                // Random size
+                const size = Math.random() * 3;
+
+                // Random twinkle duration
+                const duration = 2 + Math.random() * 3;
+
+                // Random delay
+                const delay = Math.random() * 5;
+
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.animationDelay = `${delay}s`;
+
+                starsContainer.appendChild(star);
+            }
+        }
+        // Initialize
+        createStars();
+        getSongOfTheDay();
+        updateCountdown();
+
+        // Update countdown every second
+        const countdownInterval = setInterval(updateCountdown, 1000);
+    </script>
+</body>
+
+</html>
