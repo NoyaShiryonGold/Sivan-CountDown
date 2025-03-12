@@ -14,6 +14,8 @@
             --neon-green: #05ffa1;
             --neon-purple: #b967ff;
             --neon-yellow: #fffb96;
+            --flicker-intensity: 1;
+            --neon-intensity: 100%;
         }
 
         body {
@@ -66,6 +68,7 @@
             padding: 2rem;
             max-width: 800px;
             z-index: 1;
+            transition: transform 0.5s ease;
         }
 
         .title {
@@ -100,6 +103,7 @@
             padding: 1rem;
             border-radius: 5px;
             min-width: 100px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .countdown-number {
@@ -152,7 +156,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-
         .video-container {
             margin-top: 1.5rem;
             position: relative;
@@ -191,8 +194,47 @@
             opacity: 0;
         }
 
-        @keyframes twinkle {
+        /* Special effects for final days */
+        .shake {
+            animation: shake 0.5s infinite;
+        }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Confetti styles */
+        #confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            top: -20px;
+            border-radius: 4px;
+            animation: confettiFall linear infinite;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes twinkle {
             0%,
             100% {
                 opacity: 0;
@@ -204,7 +246,6 @@
         }
 
         @keyframes neon-flicker {
-
             0%,
             19.999%,
             22%,
@@ -233,7 +274,6 @@
         }
 
         @keyframes pulse {
-
             0%,
             100% {
                 box-shadow:
@@ -320,7 +360,7 @@
 
             <div class="video-container">
                 <iframe id="youtube-iframe" width="560" height="315" src="" title="YouTube video player" frameborder="0"
-                    allow=" autoplay; clipboard-write; encrypted-media; gyroscope;" 
+                    allow="autoplay; clipboard-write; encrypted-media; gyroscope;" 
                     allowfullscreen></iframe>
             </div>
         </div>
@@ -329,6 +369,9 @@
     <script>
         // Target date - June 20, 2025
         const targetDate = new Date(2025, 5, 20, 0, 0, 0, 0).getTime(); // Month is 0-based, so June is 5
+
+        // Final Countdown song link - for the last 3 days
+        const finalCountdownLink = "https://www.youtube.com/watch?v=9jK-NcRmVcw";
 
         // Songs list
         const songs = [
@@ -391,25 +434,171 @@
             document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
             document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
             document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            
+            // Update special effects for the final week
+            updateSpecialEffects(days);
         }
 
-        // Get song of the day
-        function getSongOfTheDay() {
-            // Use the date to seed the random song (same song all day)
-            const today = new Date();
-            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+        // Special effects for the final week
+        function updateSpecialEffects(daysLeft) {
+            // Only activate special effects in the last 7 days
+            if (daysLeft <= 7) {
+                // Calculate intensity based on days left (increases as we get closer)
+                const intensity = 1 - (daysLeft / 7); // Value from 0 to 1
+                
+                // Change CSS variables for intensity
+                document.documentElement.style.setProperty('--flicker-intensity', (1 + intensity).toString());
+                document.documentElement.style.setProperty('--neon-intensity', (100 + (intensity * 100)) + '%');
+                
+                // Scale countdown items
+                const countdownItems = document.querySelectorAll('.countdown-item');
+                countdownItems.forEach(item => {
+                    const scale = 1 + (intensity * 0.3); // Grow up to 30% larger
+                    item.style.transform = `scale(${scale})`;
+                    
+                    // Enhance glow effect
+                    const glowIntensity = 5 + (intensity * 15);
+                    item.style.boxShadow = `0 0 ${glowIntensity}px var(--neon-blue), 0 0 ${glowIntensity * 2}px var(--neon-blue)`;
+                });
+                
+                // Add more stars as we get closer
+                if (!document.querySelector('.extra-stars-added') || daysLeft <= 3) {
+                    const extraStarsCount = Math.floor(intensity * 200); // Add up to 200 extra stars
+                    addExtraStars(extraStarsCount);
+                    
+                    // Mark that we've added stars to avoid adding them repeatedly
+                    if (daysLeft > 3) {
+                        document.body.classList.add('extra-stars-added');
+                    }
+                }
+                
+                // Shake effect in the last 3 days
+                if (daysLeft <= 3) {
+                    document.querySelector('.container').classList.add('shake');
+                    // Increase shake intensity as we get closer
+                    const shakeIntensity = 0.7 - (daysLeft * 0.2);
+                    document.querySelector('.shake').style.animationDuration = `${shakeIntensity}s`;
+                }
+                
+                // Add confetti in the final day
+                if (daysLeft <= 1 && !document.getElementById('confetti-container')) {
+                    startConfetti();
+                }
+            }
+        }
 
-            // Get song based on day of year
-            const songIndex = dayOfYear % songs.length;
-            const todaySong = songs[songIndex];
+        // Add extra stars for the final countdown
+        function addExtraStars(count) {
+            const starsContainer = document.getElementById('stars');
+            
+            // Remove previous extra stars if any
+            const oldExtraStars = document.querySelectorAll('.extra-star');
+            oldExtraStars.forEach(star => star.remove());
+            
+            // Add new stars
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star', 'extra-star');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Random size (slightly larger than normal stars)
+                const size = 0.5 + Math.random() * 3.5;
+                
+                // Random twinkle duration (faster than normal stars)
+                const duration = 0.5 + Math.random() * 2;
+                
+                // Random delay
+                const delay = Math.random() * 3;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Start confetti effect
+        function startConfetti() {
+            const confetti = document.createElement('div');
+            confetti.id = 'confetti-container';
+            document.body.appendChild(confetti);
+            
+            // Create 100 confetti pieces
+            for (let i = 0; i < 100; i++) {
+                createConfettiPiece(confetti);
+            }
+        }
+
+        // Create single confetti piece
+        function createConfettiPiece(container) {
+            const confettiPiece = document.createElement('div');
+            confettiPiece.classList.add('confetti-piece');
+            
+            // Random 80s neon color
+            const colors = ['#ff71ce', '#01cdfe', '#05ffa1', '#b967ff', '#fffb96'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Random properties
+            const left = Math.random() * 100;
+            const speed = 3 + Math.random() * 5;
+            const size = 5 + Math.random() * 10;
+            const delay = Math.random() * 5;
+            
+            confettiPiece.style.backgroundColor = color;
+            confettiPiece.style.left = `${left}%`;
+            confettiPiece.style.width = `${size}px`;
+            confettiPiece.style.height = `${size}px`;
+            confettiPiece.style.animationDuration = `${speed}s`;
+            confettiPiece.style.animationDelay = `${delay}s`;
+            
+            container.appendChild(confettiPiece);
+            
+            // Remove piece after animation completes
+            setTimeout(() => {
+                confettiPiece.remove();
+                // Create a new piece to keep the effect going
+                createConfettiPiece(container);
+            }, (speed + delay) * 1000);
+        }
+
+        // Get song of the day, with special handling for final 3 days
+        function getSongOfTheDay() {
+            const now = new Date().getTime();
+            let distance = targetDate - now;
+            const daysLeft = Math.floor(distance / (1000 * 60 * 60 * 24));
+            
+            let todaySong;
+            
+            // For the last 3 days, always play "The Final Countdown"
+            if (daysLeft <= 3) {
+                todaySong = {
+                    song: "The Final Countdown",
+                    artist: "Europe",
+                    youtube_link: finalCountdownLink
+                };
+            } else {
+                // Normal daily song rotation
+                const today = new Date();
+                const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                const songIndex = dayOfYear % songs.length;
+                todaySong = songs[songIndex];
+            }
 
             // Update song info and embed video
             document.getElementById('song-info').innerText = `${todaySong.song} - ${todaySong.artist}`;
 
             // Convert YouTube link to embed format
             let videoId = todaySong.youtube_link.split('v=')[1];
+            
             // Handle any time parameters if present
-            const ampersandPosition = videoId.indexOf('&');
+            const ampersandPosition = videoId ? videoId.indexOf('&') : -1;
             if (ampersandPosition !== -1) {
                 videoId = videoId.substring(0, ampersandPosition);
             }
@@ -451,6 +640,7 @@
                 starsContainer.appendChild(star);
             }
         }
+        
         // Initialize
         createStars();
         getSongOfTheDay();
@@ -458,6 +648,10 @@
 
         // Update countdown every second
         const countdownInterval = setInterval(updateCountdown, 1000);
+        
+        // For testing the final effects (uncomment to test)
+        // Comment out before using in production
+        // targetDate = new Date().getTime() + (3 * 24 * 60 * 60 * 1000); // 3 days from now
     </script>
 </body>
 
